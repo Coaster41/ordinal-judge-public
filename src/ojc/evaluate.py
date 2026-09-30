@@ -190,9 +190,11 @@ def to_markdown(rows: list[dict], split: str) -> str:
             md.append(f"\nRPS(deb, M>=2) is on the {m['n_M2subset']} items with at "
                       f"least two ratings.")
         md.append("")
-    md.append("Lower is better except acc, QWK, Spearman. `ECE_thr-floor` is ECE_thr "
-              "minus the expected ECE_thr of a perfectly calibrated model on the same "
-              "items; ~0 means no detectable miscalibration.")
+    md.append("Lower is better except acc, QWK, Spearman.")
+    if any(r["metrics"]["regime"] == "distributional" for r in rows):
+        md[-1] += (" `ECE_thr-floor` is ECE_thr minus the expected ECE_thr of a "
+                   "perfectly calibrated model on the same items; ~0 means no "
+                   "detectable miscalibration.")
     return "\n".join(md)
 
 

@@ -106,10 +106,12 @@ def _group_split(group_id: np.ndarray, seed: int = SEED,
 def _subsample_by_group(recs: list, n_max: int | None, seed: int = SEED) -> list:
     """Take whole GROUPS at random until n_max items are reached.
 
-    Sampling groups rather than rows keeps the split machinery honest (no group
-    is half-sampled) and, being uniform over groups, leaves the M distribution
-    unbiased. Note that because `_group_split` permutes the groups PRESENT,
-    changing n_max changes every item's split.
+    Sampling groups rather than rows keeps the split machinery honest and,
+    being uniform over groups, leaves the M distribution unbiased. The final
+    `[:n_max]` can drop the tail of the LAST group taken; that never leaks,
+    because splits are assigned afterwards to the groups present. Note that
+    because `_group_split` permutes the groups PRESENT, changing n_max changes
+    every item's split.
     """
     if n_max is None or len(recs) <= n_max:
         return recs

@@ -45,7 +45,8 @@ tests/            6 suites; CPU parts run anywhere, GPU parts skip without a GPU
 
 ## Install
 
-You need Python ≥ 3.10 and one CUDA GPU for the LLM steps. Heads train fine on CPU.
+You need Python ≥ 3.10 (tested on 3.10) and one CUDA GPU for the LLM steps. Heads
+train fine on CPU.
 
 ```bash
 git clone <this repo> ordinal-judge && cd ordinal-judge
@@ -56,7 +57,7 @@ pip install torch --index-url https://download.pytorch.org/whl/cu126
 
 # 2. this package; [paper] adds pandas/pyarrow for the paper corpora, [dev] adds pytest
 pip install -e ".[paper,dev]"
-# optional: the exact versions this was verified with
+# optional: the exact versions the quickstart numbers below were produced with
 pip install -r requirements.txt
 ```
 
@@ -135,7 +136,10 @@ Two caveats for this sample:
   shown for that reason.
 - **A 0.8B model is a weak judge.** Its zero-shot rollout and verbal arms are poor. The
   point of the quickstart is to exercise the pipeline end to end.
-  - The heads trained on its activations do beat climatology (0.296–0.312 vs 0.345).
+  - The heads trained on its activations score better than climatology (0.296–0.312
+    vs 0.345). In a paired bootstrap over test items the gap is 0.03–0.05, and its
+    95% interval excludes zero for three of the four heads, but not for
+    `ordinal_map__rps`.
   - Its verbal answers are mostly the prompt's worked example copied verbatim:
     `verbal.py` logs this as `example_copy_rate`, 64% here.
   - Temperature scaling then flattens the verbal arm almost to uniform. A larger model is
@@ -234,6 +238,9 @@ Logits always come from the model's own head, so logit soft-capping (Gemma) is a
 - **Keep it fixed across any runs you compare.** bf16 forward passes are not
   batch-invariant: an item's activation moves by a small fraction of a feature SD with
   batch composition.
+- **`--max-len`** (default 2048) is the prompt token budget. Long items are shortened
+  in the middle to fit. If a prompt still does not fit, `extract` stops rather than
+  cut off the answer prefill; raise `--max-len`.
 - **Big models at long `--max-len`:** a startup check rejects batch sizes whose attention
   tensor would overflow int32 indexing. That overflow shows up as an *illegal memory
   access*, not an OOM, several batches in.

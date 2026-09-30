@@ -79,6 +79,12 @@ def run_task(ds: D.OrdinalDataset, stem: str, meta: dict, model, tok, text_model
     lengths = np.array([len(P.encode(tok, p)) for p in prompts])
     print(f"[{stem}] tokens: median {int(np.median(lengths))} mean {lengths.mean():.0f} "
           f"max {lengths.max()} (>{max_len}: {int((lengths > max_len).sum())})", flush=True)
+    if (lengths > max_len).any():
+        # truncating these would cut the option list and prefill off the right,
+        # and the "answer" logit would be read from the middle of the item
+        raise SystemExit(f"[{stem}] {int((lengths > max_len).sum())} prompts exceed "
+                         f"--max-len {max_len} even after shortening the item text "
+                         f"(longest {lengths.max()} tokens); raise --max-len")
 
     X = np.zeros((n, hidden), dtype=np.float32)
     pmf = np.zeros((n, K), dtype=np.float64)
@@ -87,7 +93,7 @@ def run_task(ds: D.OrdinalDataset, stem: str, meta: dict, model, tok, text_model
     t0 = time.time()
     for bi, idx in enumerate(sorted_batches(lengths, batch_size)):
         enc = tok([prompts[i] for i in idx], return_tensors="pt", padding=True,
-                  truncation=True, max_length=max_len, add_special_tokens=False).to(dev)
+                  add_special_tokens=False).to(dev)
         hook.reset()
         out = B.forward_logits(model, enc)
         if hook.n_calls != 1:
