@@ -1,0 +1,11 @@
+# Versions this code was verified with. torch is installed separately, from the
+# index that matches your CUDA driver (see README), e.g.
+#   pip install torch==2.13.0 --index-url https://download.pytorch.org/whl/cu126
+transformers==5.15.0
+accelerate==1.14.0
+safetensors==0.8.0
+numpy==2.3.5
+scipy==1.17.1
+pandas==3.0.5
+pyarrow==25.0.1
+pytest==9.1.1

@@ -1,0 +1,13 @@
+{
+  "K": 5,
+  "level_labels": [
+    "worst",
+    "",
+    "",
+    "",
+    "best"
+  ],
+  "template": "You are rating the quality of an AI assistant's response.\n\nUser prompt:\n{prompt}\n\nAssistant response:\n{response}\n\nHelpfulness - overall helpfulness of the response to the prompt.\n\nOn a scale of 0 to 4, the helpfulness of this response is:",
+  "reverse_rollout": false,
+  "min_annotators": 1
+}

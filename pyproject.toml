@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ojc"
+version = "0.1.0"
+description = "Ordinal LLM-as-a-judge calibration: frozen activations, softmax/ordinal heads, logit and verbal baselines, recalibration"
+requires-python = ">=3.10"
+# torch is deliberately NOT listed: install the build matching your CUDA first
+# (see README), so pip does not replace it with a default wheel.
+dependencies = [
+    "transformers>=5.13",
+    "accelerate>=1.0",
+    "safetensors",
+    "numpy>=1.26",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+paper = ["pandas>=2.0", "pyarrow"]   # Measuring Hate Speech is a parquet file
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

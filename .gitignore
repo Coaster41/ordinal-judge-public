@@ -1,0 +1,9 @@
+runs/
+data/
+*.pt
+*.pt.tmp
+*.json.tmp
+__pycache__/
+*.egg-info/
+.venv/
+.pytest_cache/
